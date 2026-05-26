@@ -1,0 +1,14 @@
+{
+    "port": 14096,
+    "hostname": "127.0.0.1",
+    "autoStart": true,
+    "opencodePath": "",
+    "projectDirectory": "D:\\第二大脑",
+    "startupTimeout": 45000,
+    "defaultViewLocation": "sidebar",
+    "injectWorkspaceContext": true,
+    "maxNotesInContext": 20,
+    "maxSelectionLength": 2000,
+    "customCommand": "C:\\Users\\胖丁会唱歌\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe serve --port 14096 --hostname 127.0.0.1 --cors app://obsidian.md",
+    "useCustomCommand": true
+}

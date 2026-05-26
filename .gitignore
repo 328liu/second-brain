@@ -1,0 +1,10 @@
+# Obsidian workspace layout (personal state)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Obsidian cache
+.obsidian/cache
+
+# System files
+Thumbs.db
+.DS_Store

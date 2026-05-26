@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "deepseek/deepseek-chat",
+  "provider": {
+    "deepseek": {
+      "api": "https://api.deepseek.com"
+    }
+  },
+  "plugin": [
+    [
+      "@cubocompany/opengem",
+      {
+        "defaultVault": "第二大脑"
+      }
+    ]
+  ],
+  "mcp": {
+    "obsidian-vault": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@bitbonsai/mcpvault",
+        "D:\\第二大脑"
+      ],
+      "enabled": true
+    }
+  },
+  "command": {
+    "obsidian-inbox": {
+      "description": "整理 Obsidian 收件箱，将临时笔记归类到对应文件夹",
+      "template": "扫描 D:\\第二大脑 中所有没有明确分类的笔记（在根目录或收件箱中的 .md 文件），根据内容推断主题，移动到对应的子文件夹并添加合适的标签和链接。整理前后列出变更清单。"
+    },
+    "excalidraw-draw": {
+      "description": "根据描述生成 Excalidraw 绘图或思维导图",
+      "template": "在 D:\\第二大脑 中创建一个 Excalidraw 绘图文件（.excalidraw.md），基于用户的描述生成可视化的图表、思维导图或流程图。使用 Obsidian 兼容的 Markdown 和 Excalidraw 格式。先确认用户想画什么类型，再生成绘图代码。"
+    },
+    "wechat-writer": {
+      "description": "辅助公众号写作，提供标题、结构和润色",
+      "template": "你是一个专业的公众号写作助手。帮助用户完成公众号文章的选题、大纲、标题优化、段落润色和排版建议。参考 D:\\第二大脑\\公众号 文件夹中的现有文章风格。输出结果保存到 D:\\第二大脑\\公众号 目录。"
+    },
+    "everything-search": {
+      "description": "全局搜索 Obsidian vault 中的所有内容",
+      "template": "搜索 D:\\第二大脑 中的所有 .md 文件，使用关键词匹配和语义理解找出最相关的结果。列出文件名、所在文件夹、匹配的片段和相关标签。如果用户的问题需要跨多个笔记综合回答，先收集所有相关信息再给出完整答案。"
+    }
+  },
+  "skills": {
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "instructions": [
+    "AGENTS.md"
+  ]
+}
