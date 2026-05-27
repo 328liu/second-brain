@@ -1,5 +1,5 @@
 {
-    "port": 14096,
+    "port": 14097,
     "hostname": "127.0.0.1",
     "autoStart": true,
     "opencodePath": "",
@@ -9,6 +9,6 @@
     "injectWorkspaceContext": true,
     "maxNotesInContext": 20,
     "maxSelectionLength": 2000,
-    "customCommand": "C:\\Users\\胖丁会唱歌\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe serve --port 14096 --hostname 127.0.0.1 --cors app://obsidian.md",
+    "customCommand": "C:\\Users\\胖丁会唱歌\\AppData\\Roaming\\npm\\node_modules\\opencode-ai\\bin\\opencode.exe serve --port 14097 --hostname 127.0.0.1 --cors app://obsidian.md",
     "useCustomCommand": true
 }
