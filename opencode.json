@@ -42,6 +42,10 @@
     "everything-search": {
       "description": "全局搜索 Obsidian vault 中的所有内容",
       "template": "搜索 D:\\第二大脑 中的所有 .md 文件，使用关键词匹配和语义理解找出最相关的结果。列出文件名、所在文件夹、匹配的片段和相关标签。如果用户的问题需要跨多个笔记综合回答，先收集所有相关信息再给出完整答案。"
+    },
+    "feishu-inbox": {
+      "description": "手动处理一条内容到 Obsidian 知识库",
+      "template": "处理以下内容并保存到 Obsidian vault。判断内容类型（链接/灵感/文件），链接则提取正文。分类到对应文件夹，生成 YAML frontmatter（title、created、tags、source、status: inbox），以 YYYYMMDD-{简短标题}.md 格式保存，回复保存位置。\n\n内容：{{input}}"
     }
   },
   "skills": {
