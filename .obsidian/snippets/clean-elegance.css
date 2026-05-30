@@ -1,17 +1,28 @@
 /* ==========================================
-   Minimal polish — 纯白背景 + 浅色块 + 统一边框
+   Minimal polish — 干净协调 + 浅色块 + 统一边框
    ========================================== */
 
-/* === 纯白背景 === */
+/* === 整体底色 (极浅灰, 让中间编辑区自然融入) === */
 .workspace,
 .workspace-split,
 .workspace-tabs,
-.workspace-leaf,
-.workspace-leaf-content,
+.workspace-leaf {
+  background: #f7f7f9 !important;
+}
+
+/* 侧边栏匹配底色 */
+.workspace-leaf-content[data-type="file-explorer"],
+.workspace-leaf-content[data-type="search"],
+.workspace-leaf-content[data-type="tag"] {
+  background: #f7f7f9 !important;
+}
+
+/* 中间编辑区纯白，自然突出 */
+.workspace-leaf-content[data-type="markdown"],
 .markdown-preview-view,
 .markdown-source-view .cm-s-obsidian,
 .markdown-source-view .cm-content,
-.view-content {
+.view-content:not(.opencode-iframe-container *) {
   background: #ffffff !important;
 }
 
@@ -23,12 +34,6 @@
   background: #ffffff !important;
 }
 
-.workspace-leaf-content[data-type="file-explorer"],
-.workspace-leaf-content[data-type="search"],
-.workspace-leaf-content[data-type="tag"] {
-  background: #ffffff !important;
-}
-
 /* === 统一边框色 (极浅灰) === */
 .workspace-leaf-resize-handle,
 .view-header,
@@ -36,7 +41,21 @@
 .workspace-split,
 .workspace-tabs,
 .status-bar,
-.workspace-ribbon.mod-left {
+.workspace-ribbon.mod-left,
+.workspace-ribbon.mod-right,
+.nav-header,
+.workspace-tab-header-container,
+.workspace-tab-header.is-active,
+.workspace-tab-header,
+.workspace-tab-container-before,
+.workspace-tab-container-after,
+.workspace-tab-header-inner,
+.popover,
+.menu,
+.suggestion-container,
+.prompt,
+.modal,
+.modal-bg {
   border-color: #e8e8ec !important;
 }
 
@@ -44,9 +63,29 @@
   border-bottom: 1px solid #e8e8ec !important;
 }
 
+.workspace-tab-header-container {
+  border-bottom: 1px solid #e8e8ec !important;
+}
+
+.nav-header {
+  border-bottom: 1px solid #e8e8ec !important;
+}
+
+.workspace-leaf-resize-handle {
+  border-width: 1px !important;
+}
+
 .workspace-leaf-resize-handle:hover {
   background: var(--accent) !important;
   opacity: 0.15;
+}
+
+/* 分割线统一 */
+.markdown-preview-view hr,
+.cm-content hr {
+  border: none;
+  height: 1px;
+  background: #e8e8ec;
 }
 
 /* === 文件夹图标 === */
