@@ -86,61 +86,62 @@ jobs:
                   with open(dest, 'w', encoding='utf-8') as f:
                       f.write(text)
 
-              # Update 待办看板.md
-              if os.path.exists(kanban_file):
-                  with open(kanban_file, 'r', encoding='utf-8') as f:
-                      kanban = f.read()
-                  todo_line = f'- [ ] {body} #{prio_label}'
-                  section_hdr = f'### {month}'
-                  year_hdr = f'## {year}'
+              def add_todo_to_md(filepath, section_marker, todo_line, create_section=False):
+                  with open(filepath, 'r', encoding='utf-8') as f:
+                      lines = f.readlines()
+                  # Find section
+                  section_idx = -1
+                  for i, line in enumerate(lines):
+                      if line.rstrip() == section_marker:
+                          section_idx = i
+                          break
+                  if section_idx < 0:
+                      if not create_section:
+                          return
+                      # Find year section or create before ---
+                      year_marker = f'## {year}'
+                      yi = -1
+                      for i, line in enumerate(lines):
+                          if line.rstrip() == year_marker:
+                              yi = i
+                              break
+                      if yi >= 0:
+                          # Insert month section after year
+                          insert_at = yi + 1
+                          while insert_at < len(lines) and lines[insert_at].strip() == '':
+                              insert_at += 1
+                          lines[insert_at:insert_at] = [f'\n### {month}\n', f'{todo_line}\n']
+                      else:
+                          # Find --- separator
+                          sep_i = -1
+                          for i, line in enumerate(lines):
+                              if line.rstrip() == '---':
+                                  sep_i = i
+                                  break
+                          insert_at = sep_i if sep_i >= 0 else len(lines)
+                          lines[insert_at:insert_at] = [f'\n## {year}\n', f'\n### {month}\n', f'{todo_line}\n']
+                      with open(filepath, 'w', encoding='utf-8') as f:
+                          f.writelines(lines)
+                      return
+                  # Find last todo in this section (before next ###, ##, or ---)
+                  last_todo_idx = -1
+                  for i in range(section_idx + 1, len(lines)):
+                      line = lines[i].rstrip()
+                      if re.match(r'^[-*]\s+\[.\]', line):
+                          last_todo_idx = i
+                      elif re.match(r'^#{1,3}\s', line) or line == '---':
+                          break
+                  insert_at = last_todo_idx + 1 if last_todo_idx >= 0 else section_idx + 1
+                  # Make sure there's a blank line before the new todo if last line wasn't a todo
+                  if last_todo_idx < 0:
+                      lines.insert(insert_at, '\n')
+                      insert_at += 1
+                  lines.insert(insert_at, f'{todo_line}\n')
+                  with open(filepath, 'w', encoding='utf-8') as f:
+                      f.writelines(lines)
 
-                  if section_hdr in kanban:
-                      si = kanban.index(section_hdr) + len(section_hdr)
-                      # Find end of this section: next ###, ##, or ---
-                      tail = kanban[si:]
-                      end_match = re.search(r'\n(?=### |## |---)', tail)
-                      section_end = si + end_match.start() if end_match else len(kanban)
-                      # Find last todo within this section only
-                      section_text = kanban[si:section_end]
-                      last_todo = -1
-                      for m in re.finditer(r'^\s*[-*]\s+\[.?\]', section_text, re.MULTILINE):
-                          last_todo = si + m.end()
-                      if last_todo >= 0:
-                          kanban = kanban[:last_todo+1] + '\n' + todo_line + kanban[last_todo+1:]
-                      else:
-                          kanban = kanban[:si] + '\n' + todo_line + '\n' + kanban[si:]
-                  else:
-                      sep = kanban.find('\n---\n')
-                      insert_before = sep if sep > 0 else len(kanban)
-                      if year_hdr in kanban:
-                          yi = kanban.index(year_hdr) + len(year_hdr)
-                          kanban = kanban[:yi] + f'\n\n{section_hdr}\n\n{todo_line}' + kanban[yi:]
-                      else:
-                          kanban = kanban[:insert_before] + f'\n{year_hdr}\n\n{section_hdr}\n\n{todo_line}\n\n' + kanban[insert_before:]
-                  with open(kanban_file, 'w', encoding='utf-8') as f:
-                      f.write(kanban)
-
-              # Update 首页.md 待办 section
-              if os.path.exists(home_file):
-                  with open(home_file, 'r', encoding='utf-8') as f:
-                      home = f.read()
-                  home_line = f'- [ ] {body} #{prio_label}'
-                  todo_sec = '\n## 📋 待办\n'
-                  idx = home.find(todo_sec)
-                  if idx >= 0:
-                      after = idx + len(todo_sec)
-                      nxt = home.find('\n## ', after)
-                      end = nxt if nxt > 0 else len(home)
-                      sec_text = home[after:end]
-                      last_todo = -1
-                      for m in re.finditer(r'^\s*[-*]\s+\[.?\]', sec_text, re.MULTILINE):
-                          last_todo = after + m.end()
-                      if last_todo >= 0:
-                          home = home[:last_todo+1] + '\n' + home_line + home[last_todo+1:]
-                      else:
-                          home = home[:after] + home_line + '\n' + home[after:]
-                  with open(home_file, 'w', encoding='utf-8') as f:
-                      f.write(home)
+              add_todo_to_md(kanban_file, f'### {month}', todo_line, create_section=True)
+              add_todo_to_md(home_file, '## 📋 待办', todo_line, create_section=False)
 
               # Mark inbox as organized
               text = text.replace('status: inbox', 'status: organized')
