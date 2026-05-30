@@ -1,7 +1,53 @@
 /* ==========================================
-   Minimal polish — 简单大方，看着舒服
-   仅补充 Minimal 主题做不到的微调
+   Minimal polish — 纯白背景 + 浅色块 + 统一边框
    ========================================== */
+
+/* === 纯白背景 === */
+.workspace,
+.workspace-split,
+.workspace-tabs,
+.workspace-leaf,
+.workspace-leaf-content,
+.markdown-preview-view,
+.markdown-source-view .cm-s-obsidian,
+.markdown-source-view .cm-content,
+.view-content {
+  background: #ffffff !important;
+}
+
+.markdown-source-view.mod-cm6 .cm-editor .cm-scroller {
+  background: #ffffff !important;
+}
+
+.view-header {
+  background: #ffffff !important;
+}
+
+.workspace-leaf-content[data-type="file-explorer"],
+.workspace-leaf-content[data-type="search"],
+.workspace-leaf-content[data-type="tag"] {
+  background: #ffffff !important;
+}
+
+/* === 统一边框色 (极浅灰) === */
+.workspace-leaf-resize-handle,
+.view-header,
+.workspace-leaf,
+.workspace-split,
+.workspace-tabs,
+.status-bar,
+.workspace-ribbon.mod-left {
+  border-color: #e8e8ec !important;
+}
+
+.view-header {
+  border-bottom: 1px solid #e8e8ec !important;
+}
+
+.workspace-leaf-resize-handle:hover {
+  background: var(--accent) !important;
+  opacity: 0.15;
+}
 
 /* === 文件夹图标 === */
 .nav-folder-title[data-path="首页"] .nav-folder-title-content::before { content: "🏠 "; }
@@ -16,7 +62,30 @@
 .nav-folder-title[data-path="公众号"] .nav-folder-title-content::before { content: "📢 "; }
 .nav-folder-title[data-path="蜜蜂房"] .nav-folder-title-content::before { content: "🐝 "; }
 
-/* === 文件列表活跃项微调 === */
+/* === 左边栏文件夹浅色色块 === */
+.nav-folder-title {
+  border-radius: 6px;
+  margin: 3px 4px;
+  padding: 5px 10px;
+}
+
+.nav-folder-title[data-path="首页"] { background: rgba(108,92,231,0.07); }
+.nav-folder-title[data-path="待办总览"],
+.nav-folder-title[data-path="待办看板"] { background: rgba(249,115,22,0.07); }
+.nav-folder-title[data-path="灵感"] { background: rgba(234,179,8,0.07); }
+.nav-folder-title[data-path="知识储备"] { background: rgba(34,197,94,0.07); }
+.nav-folder-title[data-path="Inbox"] { background: rgba(239,68,68,0.07); }
+.nav-folder-title[data-path="笔记"] { background: rgba(99,102,241,0.07); }
+.nav-folder-title[data-path="写作"],
+.nav-folder-title[data-path="写作资料"] { background: rgba(236,72,153,0.07); }
+.nav-folder-title[data-path="公众号"] { background: rgba(59,130,246,0.07); }
+.nav-folder-title[data-path="蜜蜂房"] { background: rgba(168,85,247,0.07); }
+
+.nav-folder-title:hover {
+  background: var(--nav-item-background-hover) !important;
+}
+
+/* === 文件列表活跃项 === */
 .nav-file-title.is-active {
   border-left: 2px solid var(--accent);
   font-weight: 600;
@@ -30,32 +99,22 @@
 
 /* === h1 底部细线 === */
 h1 {
-  border-bottom: 1px solid var(--divider-color);
+  border-bottom: 1px solid #e8e8ec;
   padding-bottom: 0.2em;
   margin-bottom: 0.6em;
 }
 
-/* === 引用块边距微调 === */
+/* === 引用块 === */
 .markdown-rendered blockquote {
   padding: 8px 18px;
 }
 
-/* === 代码块微调 === */
+/* === 代码块 === */
 .markdown-rendered pre {
   border-radius: 8px;
 }
 
-/* === 窗口圆角 (Windows 11 风格) === */
-.workspace-leaf-content {
-  border-radius: 6px;
-}
-
-/* === 侧边栏活跃选项 === */
-.workspace-leaf-content[data-type="file-explorer"] .nav-folder-title.is-active {
-  background: var(--nav-item-background-active);
-}
-
-/* === 看板微调 === */
+/* === 看板 === */
 .kanban-plugin__lane {
   border-radius: 8px;
 }
