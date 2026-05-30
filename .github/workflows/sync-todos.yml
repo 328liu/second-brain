@@ -1,0 +1,160 @@
+name: 同步待办
+on:
+  push:
+    branches: [main]
+    paths: ['Inbox/*.md']
+
+permissions:
+  contents: write
+
+jobs:
+  sync-todos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Process inbox todos
+        shell: python
+        run: |
+          import os, re, json
+          inbox_dir = 'Inbox'
+          todo_dir = '待办总览/待办事项'
+          kanban_file = '待办总览/待办看板.md'
+          home_file = '首页.md'
+
+          def parse_frontmatter(text):
+              m = re.match(r'^---\n(.+?)\n---\n([\s\S]*)$', text, re.DOTALL)
+              if not m:
+                  return None
+              fm = {}
+              current_key = None
+              for line in m.group(1).split('\n'):
+                  kv = re.match(r'^(\w[\w-]*):\s*(.*)$', line)
+                  if kv:
+                      fm[kv.group(1)] = kv.group(2).strip('\'"')
+                      current_key = kv.group(1)
+                  elif current_key and re.match(r'^\s+-\s+', line):
+                      val = re.sub(r'^\s+-\s+', '', line).strip('\'"')
+                      if not isinstance(fm[current_key], list):
+                          fm[current_key] = [fm[current_key]] if fm[current_key] else []
+                      fm[current_key].append(val)
+              return {'fm': fm, 'body': m.group(2).strip()}
+
+          def get_ym(name):
+              m = re.match(r'(\d{4})-(\d{2})-\d{2}-', name)
+              if m:
+                  return m.group(1), str(int(m.group(2))) + '月'
+              return None, None
+
+          files = [f for f in os.listdir(inbox_dir) if f.endswith('.md') and f != '.gitkeep']
+          synced = []
+
+          for fname in files:
+              fpath = os.path.join(inbox_dir, fname)
+              with open(fpath, 'r', encoding='utf-8') as f:
+                  text = f.read()
+              parsed = parse_frontmatter(text)
+              if not parsed:
+                  continue
+              fm = parsed['fm']
+              if fm.get('status', '') != 'inbox':
+                  continue
+              tags = fm.get('tags', [])
+              if isinstance(tags, str):
+                  tags = [tags]
+              if '待办' not in tags:
+                  continue
+
+              body = parsed['body']
+              priority = fm.get('priority', '一般')
+              prio_map = {'紧急': '紧急', '重要': '重要', '一般': '一般'}
+              prio_label = prio_map.get(priority, '一般')
+
+              year, month = get_ym(fname)
+              if not year:
+                  year, month = '2026', '5月'
+
+              # Copy to 待办事项
+              os.makedirs(todo_dir, exist_ok=True)
+              dest = os.path.join(todo_dir, fname)
+              if not os.path.exists(dest):
+                  with open(dest, 'w', encoding='utf-8') as f:
+                      f.write(text)
+
+              # Update 待办看板.md
+              if os.path.exists(kanban_file):
+                  with open(kanban_file, 'r', encoding='utf-8') as f:
+                      kanban = f.read()
+                  todo_line = f'- [ ] {body} #{prio_label}'
+                  section = f'### {month}'
+                  year_section = f'## {year}'
+
+                  if section in kanban:
+                      # Insert after last todo in this section
+                      si = kanban.index(section) + len(section)
+                      tail = kanban[si:]
+                      # Find last todo line before next section or end
+                      last = -1
+                      for m in re.finditer(r'^\s*[-*]\s+\[.?\]', tail, re.MULTILINE):
+                          last = si + m.end()
+                      if last >= 0:
+                          kanban = kanban[:last+1] + '\n' + todo_line + kanban[last+1:]
+                      else:
+                          kanban = kanban[:si] + '\n\n' + todo_line + kanban[si:]
+                  else:
+                      # Find where to insert (before --- or at end)
+                      sep = kanban.find('\n---\n')
+                      insert_before = sep if sep > 0 else len(kanban)
+                      if year_section in kanban:
+                          yi = kanban.index(year_section) + len(year_section)
+                          kanban = kanban[:yi] + f'\n\n{section}\n\n{todo_line}' + kanban[yi:]
+                      else:
+                          kanban = kanban[:insert_before] + f'\n{year_section}\n\n{section}\n\n{todo_line}\n\n' + kanban[insert_before:]
+                  with open(kanban_file, 'w', encoding='utf-8') as f:
+                      f.write(kanban)
+
+              # Update 首页.md
+              if os.path.exists(home_file):
+                  with open(home_file, 'r', encoding='utf-8') as f:
+                      home = f.read()
+                  home_line = f'- [ ] {body} #{prio_label}'
+                  todo_sec = '\n## 📋 待办\n'
+                  idx = home.find(todo_sec)
+                  if idx >= 0:
+                      after = idx + len(todo_sec)
+                      # Find next ## section
+                      nxt = home.find('\n## ', after)
+                      end = nxt if nxt > 0 else len(home)
+                      sec_content = home[after:end]
+                      lines = sec_content.split('\n')
+                      last_idx = -1
+                      for i in range(len(lines)-1, -1, -1):
+                          if re.match(r'^\s*[-*]\s+\[.?\]', lines[i]):
+                              last_idx = i
+                              break
+                      if last_idx >= 0:
+                          pos = after + sec_content.index(lines[last_idx]) + len(lines[last_idx])
+                          home = home[:pos+1] + '\n' + home_line + home[pos+1:]
+                      else:
+                          home = home[:after] + home_line + '\n' + home[after:]
+                  with open(home_file, 'w', encoding='utf-8') as f:
+                      f.write(home)
+
+              # Mark inbox as organized
+              text = text.replace('status: inbox', 'status: organized')
+              with open(fpath, 'w', encoding='utf-8') as f:
+                  f.write(text)
+
+              synced.append(fname)
+
+          if synced:
+              print('Synced:', ', '.join(synced))
+          else:
+              print('No new todos')
+
+      - name: Commit & push
+        run: |
+          git config user.name "捕梦精灵"
+          git config user.email "dreamcatcher@github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "🔄 自动同步待办到看板 [skip ci]"
+          git push
