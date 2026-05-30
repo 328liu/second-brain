@@ -1,0 +1,434 @@
+/* ===== Clean & Elegant for Obsidian ===== */
+/* A minimal, airy, and readable enhancement    */
+/* Works best with Minimal theme                */
+
+/* --- Base Typography --- */
+body {
+  --font-text: "LXGW WenKai", "霞鹜文楷", "Source Han Serif SC", "Noto Serif CJK SC", "Noto Serif SC", serif;
+  --font-normal: 16px;
+  --line-height-normal: 1.75;
+  --line-height: 1.75;
+}
+
+.markdown-source-view,
+.markdown-preview-view {
+  --file-line-width: 800px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* --- Headings --- */
+.markdown-preview-view h1,
+.markdown-source-view h1 {
+  --h1-size: 2em;
+  --h1-weight: 600;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid var(--background-modifier-border);
+  padding-bottom: 0.3em;
+}
+
+.markdown-preview-view h2,
+.markdown-source-view h2 {
+  --h2-size: 1.6em;
+  --h2-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.markdown-preview-view h3,
+.markdown-source-view h3 {
+  --h3-size: 1.35em;
+  --h3-weight: 500;
+}
+
+.markdown-preview-view h4,
+.markdown-source-view h4 {
+  --h4-size: 1.15em;
+  --h4-weight: 500;
+}
+
+/* --- Links --- */
+body {
+  --link-decoration: none;
+  --link-decoration-hover: underline;
+  --link-external-decoration: none;
+  --link-external-decoration-hover: underline;
+  --link-color: var(--color-blue);
+  --link-color-hover: var(--color-purple);
+  --link-unresolved-decoration-style: dashed;
+  --link-unresolved-opacity: 0.7;
+}
+
+.cm-s-obsidian span.cm-link,
+.cm-s-obsidian span.cm-hmd-internal-link {
+  text-decoration: none;
+}
+
+/* --- Tags --- */
+body {
+  --tag-size: 0.85em;
+  --tag-color: var(--color-cyan);
+  --tag-color-hover: var(--color-blue);
+  --tag-background: var(--background-modifier-hover);
+  --tag-background-hover: var(--background-modifier-active);
+  --tag-border-radius: 12px;
+  --tag-padding-x: 10px;
+  --tag-padding-y: 2px;
+}
+
+.tag {
+  font-weight: 500;
+  border: 1px solid var(--background-modifier-border);
+  transition: all 0.15s ease;
+}
+
+.tag:hover {
+  border-color: var(--color-cyan);
+}
+
+/* --- Callouts --- */
+body {
+  --callout-border-width: 0 0 0 3px;
+  --callout-border-opacity: 0.4;
+  --callout-radius: 8px;
+  --callout-padding: 16px 20px;
+  --callout-title-padding: 0 0 8px 0;
+  --callout-title-size: 0.95em;
+}
+
+.callout {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border-radius: 8px;
+}
+
+.callout-title {
+  font-weight: 600;
+}
+
+/* --- Code Blocks --- */
+body {
+  --code-size: 0.9em;
+  --code-background: var(--background-secondary-alt);
+  --code-normal: var(--text-muted);
+  --code-comment: var(--text-faint);
+  --code-punctuation: var(--text-faint);
+  --code-radius: 6px;
+}
+
+.markdown-source-view .code-block-flair {
+  opacity: 0.5;
+}
+
+/* --- Tables --- */
+body {
+  --table-border-width: 1px;
+  --table-border-color: var(--background-modifier-border);
+  --table-row-alt-background: var(--background-secondary);
+  --table-header-background: var(--background-secondary);
+  --table-header-border-width: 0 0 2px 0;
+  --table-header-border-color: var(--background-modifier-border-focus);
+  --table-radius: 8px;
+  --table-row-height: 2.4em;
+}
+
+.markdown-rendered table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.markdown-rendered th {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.9em;
+}
+
+/* --- File Explorer --- */
+.nav-folder-title {
+  --nav-item-color: var(--text-muted);
+  --nav-item-color-hover: var(--text-normal);
+  --nav-item-color-active: var(--text-accent);
+  --nav-item-background-hover: var(--background-secondary-alt);
+  --nav-item-background-active: var(--background-modifier-hover);
+  --nav-item-padding: 6px 10px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.nav-file-title {
+  --nav-item-padding: 4px 10px 4px 28px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  transition: all 0.1s ease;
+}
+
+.nav-file-title:hover {
+  background: var(--background-secondary-alt);
+}
+
+.nav-file-title.is-active {
+  background: var(--background-modifier-hover);
+  border-left: 2px solid var(--color-cyan);
+}
+
+/* --- Folder icons / color --- */
+.nav-folder-title-content::before {
+  content: "📁 ";
+  font-size: 0.85em;
+  margin-right: 2px;
+}
+
+.nav-folder-title.is-collapsed .nav-folder-title-content::before {
+  content: "📂 ";
+}
+
+/* --- Sidebar --- */
+.side-dock-ribbon {
+  --ribbon-background: var(--background-secondary);
+}
+
+.workspace-ribbon.side-dock-ribbon {
+  border-right: 1px solid var(--background-modifier-border);
+}
+
+.side-dock-ribbon-tab,
+.side-dock-ribbon-action {
+  border-radius: 6px;
+  margin: 2px 4px;
+}
+
+/* --- Tab Headers --- */
+.workspace-tab-header {
+  --tab-outline-width: 0;
+  --tab-curve: 0;
+  --tab-radius: 0;
+  --tab-radius-active: 0;
+}
+
+.workspace-tab-header.is-active {
+  background: transparent;
+  box-shadow: inset 0 -2px 0 var(--color-cyan);
+  font-weight: 600;
+}
+
+.workspace-tab-header-inner {
+  padding: 6px 12px;
+}
+
+/* --- Search --- */
+.search-result-file-title {
+  font-weight: 600;
+}
+
+.search-result-file-match {
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 2px 0;
+}
+
+/* --- Graph --- */
+.graph-view.color-line {
+  --graph-line: var(--background-modifier-border);
+}
+
+.graph-view.color-fill {
+  --graph-node: var(--text-muted);
+}
+
+.graph-view.color-fill-highlight {
+  --graph-node-highlight: var(--color-cyan);
+}
+
+.graph-view.color-circle {
+  --graph-circle: var(--background-modifier-border);
+}
+
+.graph-view.color-fill-tag {
+  --graph-tag: var(--color-green);
+}
+
+.graph-view.color-fill-attachment {
+  --graph-attachment: var(--color-orange);
+}
+
+.graph-view.color-fill-unresolved {
+  --graph-unresolved: var(--text-faint);
+  --graph-unresolved-opacity: 0.5;
+}
+
+.graph-view.color-arrow {
+  --graph-arrow: var(--text-faint);
+}
+
+.graph-view.color-fill-focused {
+  --graph-focused: var(--color-cyan);
+}
+
+/* --- Blocks / Embeds --- */
+.markdown-embed {
+  --embed-border-left: 2px solid var(--background-modifier-border);
+  --embed-border-right: none;
+  --embed-border-top: none;
+  --embed-border-bottom: none;
+  --embed-padding: 0 0 0 16px;
+  --embed-background: none;
+}
+
+.markdown-embed .markdown-embed-title {
+  font-weight: 600;
+  font-size: 0.95em;
+  letter-spacing: 0.02em;
+}
+
+/* --- Checkboxes --- */
+body {
+  --checkbox-radius: 4px;
+  --checkbox-size: 16px;
+  --checkbox-color: var(--color-cyan);
+  --checkbox-color-hover: var(--color-blue);
+}
+
+input[type=checkbox] {
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=checkbox]:checked {
+  background-color: var(--color-cyan);
+}
+
+/* --- Blockquotes --- */
+body {
+  --blockquote-border-thickness: 3px;
+  --blockquote-border-color: var(--color-cyan);
+  --blockquote-background-color: transparent;
+}
+
+.markdown-rendered blockquote {
+  padding: 8px 20px;
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+/* --- Horizontal Rules --- */
+body {
+  --hr-thickness: 1px;
+  --hr-color: var(--background-modifier-border);
+}
+
+.markdown-rendered hr {
+  margin: 2em 0;
+}
+
+/* --- Selection highlights --- */
+body {
+  --text-highlight-bg: var(--color-yellow);
+  --text-highlight-bg-active: var(--color-orange);
+}
+
+/* --- UI Polish --- */
+.workspace-leaf-resize-handle {
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.workspace-leaf-resize-handle:hover {
+  background: var(--color-cyan);
+  opacity: 0.3;
+}
+
+.status-bar {
+  border-top: 1px solid var(--background-modifier-border);
+  font-size: 0.8em;
+  padding: 0 12px;
+}
+
+/* --- Scrollbar --- */
+body {
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb-bg: var(--background-modifier-border);
+  --scrollbar-active-thumb-bg: var(--text-faint);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* --- Properties / Frontmatter --- */
+.metadata-container {
+  --metadata-border-width: 0 0 1px 0;
+  --metadata-border-color: var(--background-modifier-border);
+  --metadata-input-background: transparent;
+  --metadata-input-background-hover: var(--background-secondary-alt);
+  border-radius: 0;
+  padding: 8px 0;
+  margin-bottom: 16px;
+}
+
+/* --- Inline Title --- */
+.inline-title {
+  --inline-title-color: var(--text-normal);
+  --inline-title-font: var(--font-text);
+  --inline-title-size: 2.2em;
+  --inline-title-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+/* --- Canvas --- */
+.canvas-wrapper {
+  --canvas-color: var(--background-modifier-border);
+}
+
+.canvas-node .canvas-node-content {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* --- Animations --- */
+body {
+  --anim-duration-none: 0;
+  --anim-duration-superfast: 70ms;
+  --anim-duration-fast: 140ms;
+  --anim-duration-moderate: 300ms;
+  --anim-motion-smooth: cubic-bezier(0.45, 0.05, 0.2, 1);
+}
+
+/* --- Vault Name in Title Bar --- */
+.view-header-title {
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+/* --- Empty State --- */
+.empty-state-title {
+  font-size: 1.4em;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+
+.empty-state-action-list {
+  margin-top: 1em;
+}
+
+/* --- Suggestion / Popover --- */
+.suggestion-container {
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.suggestion-item {
+  border-radius: 4px;
+  margin: 2px 4px;
+  padding: 6px 10px;
+}
+
+.suggestion-item.is-selected {
+  background: var(--background-modifier-hover);
+}

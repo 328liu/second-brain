@@ -1,1 +1,15 @@
-{}
+{
+  "accentColor": "#2b9a8c",
+  "cssTheme": "Minimal",
+  "theme": "adapt",
+  "translucency": false,
+  "nativeMenus": false,
+  "showViewHeader": true,
+  "baseFontSize": 16,
+  "interfaceFontFamily": "",
+  "textFontFamily": "",
+  "monospaceFontFamily": "",
+  "enabledCssSnippets": [
+    "clean-elegance"
+  ]
+}
