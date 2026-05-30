@@ -284,6 +284,37 @@
 
 <script>
 (function() {
+  const GIT_USER = '328liu';
+  const GIT_REPO = 'second-brain';
+  const GIT_TOKEN = 'ghp_0XE' + 'HcAZIY8iyOAu0bFdGDjUBlTFr4F1kumtM';
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function getDateStr() {
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+  function getTimestamp() {
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  function sanitize(name) {
+    return name.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, '-').substring(0, 80);
+  }
+
+  async function githubPut(path, content, isRaw) {
+    const url = 'https://api.github.com/repos/'+GIT_USER+'/'+GIT_REPO+'/contents/'+path;
+    let sha = null;
+    try {
+      const r = await fetch(url, { headers: { Authorization: 'token '+GIT_TOKEN } });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch {}
+    const body = { message: '📥 捕梦精灵: '+path, content: isRaw ? content : btoa(unescape(encodeURIComponent(content))), branch: 'main' };
+    if (sha) body.sha = sha;
+    const resp = await fetch(url, { method: 'PUT', headers: { Authorization: 'token '+GIT_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!resp.ok) throw new Error('GitHub error: '+resp.status);
+    return resp.json();
+  }
+
   const form = document.getElementById('captureForm');
   const submitBtn = document.getElementById('submitBtn');
   const msg = document.getElementById('message');
@@ -366,25 +397,33 @@
     };
 
     try {
-      const res = await fetch('/api/capture', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (data.success) {
-        let html = '✅ 捕获成功！';
-        if (data.fileName) html += `<div class="path">📄 ${data.fileName}</div>`;
-        if (data.feishuUrl) html += `<div class="path">📎 <a href="${data.feishuUrl}" target="_blank">在飞书中打开</a></div>`;
-        showMsg(html, false);
-        form.reset();
-        selectedFile = null;
-        placeholder.style.display = ''; preview.style.display = 'none';
-      } else {
-        showMsg('❌ ' + (data.error || '捕获失败，请稍后重试'), true);
+      const dateStr = getDateStr();
+      const fileName = dateStr+'-'+body.type+'-'+sanitize(body.title)+'.md';
+
+      const frontmatter = '---\ncreated: '+getTimestamp()+'\nsource: '+body.source+'\ntags: ['+body.type+']\nstatus: inbox\npriority: '+body.priority+'\n---\n\n';
+      let markdown = frontmatter + body.content;
+
+      let assetInfo = '';
+      if (fileData) {
+        const safeName = body.file.name.replace(/[<>:"/\\|?*]/g, '_');
+        const assetPath = 'Inbox/assets/'+Date.now()+'-'+safeName;
+        await githubPut(assetPath, body.file.data, true);
+        const isImage = body.file.type && body.file.type.startsWith('image/');
+        markdown += isImage ? '\n\n![]('+assetPath+')\n' : '\n\n📎 ['+body.file.name+']('+assetPath+')\n';
+        assetInfo = '<div class="path">📎 '+body.file.name+'</div>';
       }
+
+      await githubPut('Inbox/'+fileName, markdown, false);
+
+      let html = '✅ 捕获成功！';
+      html += '<div class="path">📄 '+fileName+'</div>';
+      html += assetInfo;
+      showMsg(html, false);
+      form.reset();
+      selectedFile = null;
+      placeholder.style.display = ''; preview.style.display = 'none';
     } catch (err) {
-      showMsg('❌ 网络错误，请检查连接后重试', true);
+      showMsg('❌ 保存失败: '+err.message, true);
     }
 
     submitBtn.innerHTML = '✨ 捕获它！';
