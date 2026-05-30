@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "public": "public",
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 30,
+      "memory": 512
+    }
+  },
+  "rewrites": [
+    { "source": "/hanzi-snake", "destination": "/hanzi-snake.html" },
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}
