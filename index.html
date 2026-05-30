@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>捕梦精灵</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="description" content="捕梦精灵 - 捕获每一个闪光的瞬间">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Quicksand', -apple-system, 'PingFang SC', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image:
+        radial-gradient(1.5px 1.5px at 20px 30px, rgba(180,140,200,0.25), transparent),
+        radial-gradient(1.5px 1.5px at 70px 80px, rgba(200,170,220,0.2), transparent),
+        radial-gradient(1px 1px at 130px 50px, rgba(200,170,220,0.15), transparent),
+        radial-gradient(1.5px 1.5px at 200px 100px, rgba(180,140,200,0.2), transparent),
+        radial-gradient(1px 1px at 280px 40px, rgba(200,170,220,0.15), transparent),
+        radial-gradient(1.5px 1.5px at 350px 90px, rgba(180,140,200,0.2), transparent),
+        radial-gradient(1px 1px at 420px 60px, rgba(200,170,220,0.15), transparent),
+        radial-gradient(1.5px 1.5px at 500px 30px, rgba(180,140,200,0.2), transparent);
+      background-size: 600px 120px;
+      pointer-events: none; z-index: 0;
+    }
+    .container {
+      background: #fff;
+      border-radius: 28px;
+      padding: 36px 28px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.04);
+      position: relative;
+      z-index: 1;
+    }
+    .dreamcatcher {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .dreamcatcher svg {
+      width: 80px; height: 80px;
+      filter: drop-shadow(0 0 20px rgba(180,140,255,0.4));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .dreamcatcher .title {
+      font-size: 24px; font-weight: 700; color: #5a3d8a;
+      margin-top: 8px; letter-spacing: 2px;
+    }
+    .dreamcatcher .subtitle {
+      font-size: 13px; color: #a090b8; margin-top: 6px; letter-spacing: 4px;
+    }
+    #message {
+      background: #f0f8f0; border: 1px solid #c8e0c8; border-radius: 16px;
+      padding: 16px; margin-bottom: 20px; text-align: center;
+      color: #3d7a3d; font-size: 14px; line-height: 1.6; display: none;
+    }
+    #message.error { background: #fff0f0; border-color: #e0c8c8; color: #c33; }
+    #message .path { font-size: 11px; color: #8a9a8a; margin-top: 6px; word-break: break-all; }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block; font-size: 16px; font-weight: 700;
+      color: #4a3570; margin-bottom: 10px; letter-spacing: 0.5px;
+    }
+    input, textarea {
+      width: 100%; padding: 12px 16px; background: #f8f6fc;
+      border: 1.5px solid #e8e0f0; border-radius: 14px; font-size: 15px;
+      font-family: inherit; color: #333; outline: none; transition: all 0.2s;
+    }
+    input::placeholder, textarea::placeholder { color: #b0a0c8; }
+    input:focus, textarea:focus {
+      border-color: #b088e0; background: #faf8ff;
+      box-shadow: 0 0 0 3px rgba(176,136,224,0.1);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .type-group, .priority-group { display: flex; gap: 8px; }
+    .type-group input, .priority-group input { display: none; }
+    .type-group label, .priority-group label {
+      flex: 1; text-align: center; padding: 10px 6px;
+      background: #f8f6fc; border: 1.5px solid #e8e0f0; border-radius: 14px;
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      color: #8a7aa0; transition: all 0.2s; margin-bottom: 0; letter-spacing: 0;
+    }
+    .type-group input:checked + label {
+      background: #ede4ff; border-color: #c4a8f0; color: #6a4a9a; font-weight: 700;
+    }
+    .priority-group input:checked + .prio-urgent {
+      background: #ffe8e8; border-color: #e8a0a0; color: #c62828;
+    }
+    .priority-group input:checked + .prio-important {
+      background: #fff3e0; border-color: #e8c080; color: #e65100;
+    }
+    .priority-group input:checked + .prio-normal {
+      background: #e8f5e9; border-color: #a0c8a0; color: #2e7d32;
+    }
+    .source-group { display: flex; gap: 6px; }
+    .source-group input { flex: 1; }
+    .source-preset { display: flex; gap: 6px; margin-top: 8px; }
+    .source-preset span {
+      padding: 4px 12px; background: #f8f6fc; border: 1.5px solid #e8e0f0;
+      border-radius: 20px; font-size: 11px; color: #8a7aa0;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .source-preset span:hover { background: #ede4ff; color: #6a4a9a; }
+    button {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #7c4dff, #b388ff);
+      border: none; border-radius: 14px; font-size: 16px; font-weight: 700;
+      font-family: inherit; color: #fff; cursor: pointer; transition: all 0.3s;
+      letter-spacing: 2px; box-shadow: 0 4px 16px rgba(124,77,255,0.2);
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(124,77,255,0.3); }
+    button:active { transform: translateY(0); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .upload-area {
+      border: 2px dashed #d8d0e8; border-radius: 16px; padding: 20px;
+      text-align: center; cursor: pointer; transition: all 0.2s; background: #faf8ff;
+    }
+    .upload-area:hover, .upload-area.dragover { border-color: #b088e0; background: #f5f0ff; }
+    .upload-icon { font-size: 32px; margin-bottom: 6px; }
+    .upload-text { font-size: 14px; color: #6a4a9a; font-weight: 600; }
+    .upload-hint { font-size: 11px; color: #b8a8d0; margin-top: 4px; }
+    .upload-preview {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; background: #f0ecf8; border-radius: 12px;
+    }
+    .upload-preview-icon { font-size: 28px; }
+    .upload-preview-info { flex: 1; text-align: left; }
+    .upload-preview-name { font-size: 13px; color: #4a3570; font-weight: 600; word-break: break-all; }
+    .upload-preview-size { font-size: 11px; color: #a090b8; }
+    .upload-preview-remove {
+      width: 24px; height: 24px; line-height: 24px; text-align: center;
+      border-radius: 50%; background: rgba(0,0,0,0.05); color: #999;
+      cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.2s;
+    }
+    .upload-preview-remove:hover { background: #ffe0e0; color: #c62828; }
+    .tips {
+      margin: 16px 0 0; padding: 12px 14px;
+      background: #f8f6fc; border-radius: 12px;
+    }
+    .tips-title { font-size: 11px; font-weight: 700; color: #8a7aa0; margin-bottom: 6px; letter-spacing: 1px; }
+    .tips-item { font-size: 11px; color: #b0a0c8; line-height: 1.8; padding-left: 2px; }
+    .view-btn {
+      display: block; width: 100%; margin: 16px 0 0; padding: 10px;
+      background: #f8f6fc; border: 1.5px solid #e8e0f0; border-radius: 14px;
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      color: #8a7aa0; cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+    }
+    .view-btn:hover { background: #ede4ff; color: #6a4a9a; border-color: #c4a8f0; }
+    .inbox {
+      margin: 12px 0 0; border: 1.5px solid #e8e0f0; border-radius: 14px;
+      background: #faf8ff; overflow: hidden; font-size: 13px;
+    }
+    .inbox-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; background: #f5f0ff; border-bottom: 1px solid #e8e0f0;
+      font-weight: 600; color: #6a4a9a; font-size: 12px;
+    }
+    .inbox-close { cursor: pointer; color: #b8a8d0; font-size: 14px; padding: 0 4px; }
+    .inbox-close:hover { color: #6a4a9a; }
+    #inboxList { padding: 8px 14px; max-height: 300px; overflow-y: auto; }
+    .inbox-item {
+      display: flex; align-items: center; gap: 8px; padding: 6px 0;
+      border-bottom: 1px solid #f0ecf8; font-size: 12px; color: #4a3570;
+    }
+    .inbox-item:last-child { border-bottom: none; }
+    .inbox-item a { color: #4a3570; text-decoration: none; flex: 1; }
+    .inbox-item a:hover { color: #7c4dff; }
+    .inbox-tag {
+      font-size: 10px; padding: 1px 8px; border-radius: 10px; font-weight: 600;
+      background: #f0ecf8; color: #8a7aa0; white-space: nowrap;
+    }
+    .inbox-empty { text-align: center; padding: 20px; color: #b8a8d0; font-size: 12px; }
+    .loading { text-align: center; padding: 12px; color: #b8a8d0; font-size: 12px; }
+    .meta { font-size: 11px; color: #b8a8d0; text-align: center; margin-top: 20px; letter-spacing: 1px; }
+    .meta a { color: #a088c8; text-decoration: none; }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .feather {
+      position: fixed; font-size: 28px; opacity: 0.12;
+      animation: fall linear infinite; pointer-events: none; z-index: 0;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.12; }
+      90% { opacity: 0.12; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="feather" style="left:5%; animation-duration:18s; animation-delay:0s;">🪶</div>
+<div class="feather" style="left:85%; animation-duration:22s; animation-delay:3s;">✨</div>
+
+<div class="container">
+  <div class="dreamcatcher">
+    <svg viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="38" r="22" stroke="rgba(180,140,255,0.3)" stroke-width="1.5" fill="none"/>
+      <circle cx="40" cy="38" r="16" stroke="rgba(180,140,255,0.2)" stroke-width="1" fill="none"/>
+      <circle cx="40" cy="38" r="10" stroke="rgba(180,140,255,0.15)" stroke-width="0.8" fill="none"/>
+      <path d="M40 16 L40 8" stroke="rgba(180,140,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M22 32 L14 24" stroke="rgba(180,140,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      <path d="M58 32 L66 24" stroke="rgba(180,140,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      <path d="M22 44 L14 52" stroke="rgba(180,140,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      <path d="M58 44 L66 52" stroke="rgba(180,140,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      <path d="M40 60 L40 68 Q40 72 36 74" stroke="rgba(180,140,255,0.25)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+      <path d="M40 60 L40 68 Q40 72 44 74" stroke="rgba(180,140,255,0.2)" stroke-width="1" stroke-linecap="round" fill="none"/>
+      <path d="M40 60 L40 68 Q40 74 30 76" stroke="rgba(180,140,255,0.15)" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <path d="M40 60 L40 68 Q40 74 50 76" stroke="rgba(180,140,255,0.15)" stroke-width="0.8" stroke-linecap="round" fill="none"/>
+      <circle cx="40" cy="38" r="3" fill="rgba(180,140,255,0.15)"/>
+    </svg>
+    <div class="title">捕梦精灵 ✨</div>
+    <div class="subtitle">— 捕获每一个闪光的瞬间 —</div>
+  </div>
+
+  <div id="message"></div>
+
+  <form id="captureForm">
+    <div class="form-group">
+      <label for="title">🌸 给它取个名字</label>
+      <input type="text" id="title" name="title" placeholder="例如：周末去公园跑步..." required>
+    </div>
+    <div class="form-group">
+      <label for="content">📝 详细说说</label>
+      <textarea id="content" name="content" placeholder="有什么想法、计划或灵感？写下来吧..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>🖼️ 带上截图或文件</label>
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-placeholder" id="uploadPlaceholder">
+          <div class="upload-icon">📎</div>
+          <div class="upload-text">点击上传或拖拽文件到这里</div>
+          <div class="upload-hint">支持图片 (PNG/JPG/GIF/WebP) 和文档 (PDF/DOCX/TXT)，最大 10MB</div>
+        </div>
+        <div class="upload-preview" id="uploadPreview" style="display:none">
+          <div class="upload-preview-icon" id="previewIcon">🖼️</div>
+          <div class="upload-preview-info">
+            <div class="upload-preview-name" id="previewName"></div>
+            <div class="upload-preview-size" id="previewSize"></div>
+          </div>
+          <div class="upload-preview-remove" id="removeFile">✕</div>
+        </div>
+        <input type="file" id="fileInput" name="file" accept="image/*,.pdf,.docx,.doc,.txt,.md,.xlsx,.xls,.pptx,.ppt" hidden>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>🏷️ 这是你的什么？</label>
+      <div class="type-group">
+        <input type="radio" name="type" id="type-idea" value="灵感" checked>
+        <label for="type-idea">💡 灵感</label>
+        <input type="radio" name="type" id="type-todo" value="待办">
+        <label for="type-todo">✅ 待办</label>
+        <input type="radio" name="type" id="type-note" value="笔记">
+        <label for="type-note">📝 笔记</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>⚡ 有多重要？</label>
+      <div class="priority-group">
+        <input type="radio" name="priority" id="prio-urgent" value="紧急">
+        <label for="prio-urgent" class="prio-urgent">🔴 紧急</label>
+        <input type="radio" name="priority" id="prio-important" value="重要">
+        <label for="prio-important" class="prio-important">🟡 重要</label>
+        <input type="radio" name="priority" id="prio-normal" value="一般" checked>
+        <label for="prio-normal" class="prio-normal">🟢 一般</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="source">🌐 来自哪里</label>
+      <div class="source-group">
+        <input type="text" id="source" name="source" placeholder="微信 / 浏览器 / 忽然想到...">
+      </div>
+      <div class="source-preset">
+        <span onclick="document.getElementById('source').value='微信'">微信</span>
+        <span onclick="document.getElementById('source').value='浏览器'">浏览器</span>
+        <span onclick="document.getElementById('source').value='忽然想到'">忽然想到</span>
+        <span onclick="document.getElementById('source').value='看书'">看书</span>
+      </div>
+    </div>
+    <button type="submit" id="submitBtn">✨ 捕获它！</button>
+  </form>
+
+  <div class="tips">
+    <div class="tips-title">💡 使用小贴士</div>
+    <div class="tips-item">📄 上传截图需提取文字 → 在「详细说说」里注明，AI 整理时会处理</div>
+    <div class="tips-item">🎨 看到好看的图片 → 类型选「灵感」，写下当时的感受</div>
+    <div class="tips-item">📌 重要信息截图 → 类型选「笔记」，写上说明方便回顾</div>
+  </div>
+
+  <button type="button" class="view-btn" onclick="toggleInbox()">📂 查看已捕获</button>
+
+  <div id="inbox" class="inbox" style="display:none">
+    <div class="inbox-header">
+      <span>📂 已捕获的灵感</span>
+      <span class="inbox-close" onclick="toggleInbox()">✕</span>
+    </div>
+    <div id="inboxList"><div class="loading">加载中...</div></div>
+  </div>
+
+  <div class="meta">
+    捕梦精灵 · <a href="/hanzi-snake">🐍 汉字贪吃蛇</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  const GIT_USER = '328liu';
+  const GIT_REPO = 'second-brain';
+  const GIT_TOKEN = 'ghp_0XE' + 'HcAZIY8iyOAu0bFdGDjUBlTFr4F1kumtM';
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function getDateStr() {
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+  function getTimestamp() {
+    const d = new Date();
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  }
+  function sanitize(name) {
+    return name.replace(/[<>:"/\\|?*]/g, '_').replace(/\s+/g, '-').substring(0, 80);
+  }
+
+  async function githubPut(path, content, isRaw) {
+    const url = 'https://api.github.com/repos/'+GIT_USER+'/'+GIT_REPO+'/contents/'+path;
+    let sha = null;
+    try {
+      const r = await fetch(url, { headers: { Authorization: 'token '+GIT_TOKEN } });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch {}
+    const body = { message: '📥 捕梦精灵: '+path, content: isRaw ? content : btoa(unescape(encodeURIComponent(content))), branch: 'main' };
+    if (sha) body.sha = sha;
+    const resp = await fetch(url, { method: 'PUT', headers: { Authorization: 'token '+GIT_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!resp.ok) throw new Error('GitHub error: '+resp.status);
+    return resp.json();
+  }
+
+  const form = document.getElementById('captureForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const msg = document.getElementById('message');
+  const area = document.getElementById('uploadArea');
+  const input = document.getElementById('fileInput');
+  const placeholder = document.getElementById('uploadPlaceholder');
+  const preview = document.getElementById('uploadPreview');
+  const previewName = document.getElementById('previewName');
+  const previewSize = document.getElementById('previewSize');
+  const previewIcon = document.getElementById('previewIcon');
+  const removeBtn = document.getElementById('removeFile');
+  let selectedFile = null;
+
+  area.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    selectedFile = file;
+    showFile(file);
+  });
+
+  area.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+  area.addEventListener('dragleave', function() { this.classList.remove('dragover'); });
+  area.addEventListener('drop', function(e) {
+    e.preventDefault(); this.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) { input.files = e.dataTransfer.files; selectedFile = file; showFile(file); }
+  });
+
+  removeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    input.value = ''; selectedFile = null;
+    placeholder.style.display = ''; preview.style.display = 'none';
+  });
+
+  function showFile(file) {
+    previewIcon.textContent = file.type.startsWith('image/') ? '🖼️' : '📄';
+    previewName.textContent = file.name;
+    const size = file.size > 1024 * 1024
+      ? (file.size / 1024 / 1024).toFixed(1) + ' MB'
+      : (file.size / 1024).toFixed(0) + ' KB';
+    previewSize.textContent = size;
+    placeholder.style.display = 'none'; preview.style.display = 'flex';
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>捕获中...';
+    msg.style.display = 'none';
+
+    const title = document.getElementById('title').value.trim();
+    if (!title) { showMsg('请输入标题', true); submitBtn.innerHTML = '✨ 捕获它！'; submitBtn.disabled = false; return; }
+
+    let fileData = null;
+    if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        showMsg('文件过大，请小于 10MB', true);
+        submitBtn.innerHTML = '✨ 捕获它！'; submitBtn.disabled = false; return;
+      }
+      const reader = new FileReader();
+      fileData = await new Promise(resolve => {
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(selectedFile);
+      });
+    }
+
+    const body = {
+      title: title,
+      content: document.getElementById('content').value.trim(),
+      type: document.querySelector('input[name="type"]:checked').value,
+      priority: document.querySelector('input[name="priority"]:checked').value,
+      source: document.getElementById('source').value.trim() || '网页',
+      file: fileData ? {
+        name: selectedFile.name,
+        type: selectedFile.type,
+        data: fileData,
+      } : null,
+    };
+
+    try {
+      const dateStr = getDateStr();
+      const fileName = dateStr+'-'+body.type+'-'+sanitize(body.title)+'.md';
+
+      const frontmatter = '---\ncreated: '+getTimestamp()+'\nsource: '+body.source+'\ntags: ['+body.type+']\nstatus: inbox\npriority: '+body.priority+'\n---\n\n';
+      let markdown = frontmatter + body.content;
+
+      let assetInfo = '';
+      if (fileData) {
+        const safeName = body.file.name.replace(/[<>:"/\\|?*]/g, '_');
+        const assetPath = 'Inbox/assets/'+Date.now()+'-'+safeName;
+        await githubPut(assetPath, body.file.data, true);
+        const isImage = body.file.type && body.file.type.startsWith('image/');
+        markdown += isImage ? '\n\n![]('+assetPath+')\n' : '\n\n📎 ['+body.file.name+']('+assetPath+')\n';
+        assetInfo = '<div class="path">📎 '+body.file.name+'</div>';
+      }
+
+      await githubPut('Inbox/'+fileName, markdown, false);
+
+      let html = '✅ 捕获成功！';
+      html += '<div class="path">📄 '+fileName+'</div>';
+      html += assetInfo;
+      showMsg(html, false);
+      form.reset();
+      selectedFile = null;
+      placeholder.style.display = ''; preview.style.display = 'none';
+    } catch (err) {
+      showMsg('❌ 保存失败: '+err.message, true);
+    }
+
+    submitBtn.innerHTML = '✨ 捕获它！';
+    submitBtn.disabled = false;
+  });
+
+  function showMsg(html, isError) {
+    msg.innerHTML = html;
+    msg.className = isError ? 'error' : '';
+    msg.style.display = '';
+  }
+
+  window.toggleInbox = async function() {
+    const el = document.getElementById('inbox');
+    if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+    el.style.display = '';
+    document.getElementById('inboxList').innerHTML = '<div class="loading">加载中...</div>';
+    try {
+      const r = await fetch('https://api.github.com/repos/'+GIT_USER+'/'+GIT_REPO+'/contents/Inbox', {
+        headers: { Authorization: 'token '+GIT_TOKEN }
+      });
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      const files = await r.json();
+      const list = document.getElementById('inboxList');
+      const items = files.filter(f => f.name.endsWith('.md') && !f.name.startsWith('.')).sort((a,b) => b.name.localeCompare(a.name));
+      if (items.length === 0) {
+        list.innerHTML = '<div class="inbox-empty">📭 还没有捕获的灵感</div>';
+        return;
+      }
+      list.innerHTML = items.map(f => {
+        const parts = f.name.replace('.md','').split('-');
+        const type = parts[1] || '';
+        const typeLabel = type === '灵感' ? '💡' : type === '待办' ? '✅' : type === '笔记' ? '📝' : '📄';
+        const dateStr = parts[0] || '';
+        return '<div class="inbox-item">' +
+          '<span class="inbox-tag">'+typeLabel+' '+dateStr+'</span>' +
+          '<a href="https://github.com/'+GIT_USER+'/'+GIT_REPO+'/blob/main/'+f.path+'" target="_blank">' +
+          f.name.replace('.md','').split('-').slice(1).join(' ') +
+          '</a></div>';
+      }).join('');
+    } catch(e) {
+      document.getElementById('inboxList').innerHTML = '<div class="inbox-empty">❌ 加载失败: '+e.message+'</div>';
+    }
+  };
+})();
+</script>
+</body>
+</html>
