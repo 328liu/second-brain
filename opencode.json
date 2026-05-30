@@ -18,9 +18,9 @@
     "obsidian-vault": {
       "type": "local",
       "command": [
-        "npx",
-        "-y",
-        "@bitbonsai/mcpvault",
+        "node",
+        ".opencode/node_modules/@cubocompany/opengem/dist/mcp.js",
+        "--vault",
         "D:\\第二大脑"
       ],
       "enabled": true
