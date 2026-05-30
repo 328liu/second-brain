@@ -30,12 +30,18 @@ jobs:
               for line in m.group(1).split('\n'):
                   kv = re.match(r'^(\w[\w-]*):\s*(.*)$', line)
                   if kv:
-                      fm[kv.group(1)] = kv.group(2).strip('\'"')
+                      raw_val = kv.group(2)
+                      # Handle inline YAML list: [a, b, c]
+                      list_m = re.match(r'^\[([^\]]+)\]$', raw_val)
+                      if list_m:
+                          fm[kv.group(1)] = [v.strip().strip('\'"') for v in list_m.group(1).split(',')]
+                      else:
+                          fm[kv.group(1)] = raw_val.strip('\'"')
                       current_key = kv.group(1)
                   elif current_key and re.match(r'^\s+-\s+', line):
                       val = re.sub(r'^\s+-\s+', '', line).strip('\'"')
-                      if not isinstance(fm[current_key], list):
-                          fm[current_key] = [fm[current_key]] if fm[current_key] else []
+                      if not isinstance(fm.get(current_key), list):
+                          fm[current_key] = [fm[current_key]] if fm.get(current_key) else []
                       fm[current_key].append(val)
               return {'fm': fm, 'body': m.group(2).strip()}
 
