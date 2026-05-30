@@ -158,6 +158,38 @@
     }
     .tips-title { font-size: 11px; font-weight: 700; color: #8a7aa0; margin-bottom: 6px; letter-spacing: 1px; }
     .tips-item { font-size: 11px; color: #b0a0c8; line-height: 1.8; padding-left: 2px; }
+    .view-btn {
+      display: block; width: 100%; margin: 16px 0 0; padding: 10px;
+      background: #f8f6fc; border: 1.5px solid #e8e0f0; border-radius: 14px;
+      font-size: 13px; font-weight: 600; font-family: inherit;
+      color: #8a7aa0; cursor: pointer; transition: all 0.2s; letter-spacing: 1px;
+    }
+    .view-btn:hover { background: #ede4ff; color: #6a4a9a; border-color: #c4a8f0; }
+    .inbox {
+      margin: 12px 0 0; border: 1.5px solid #e8e0f0; border-radius: 14px;
+      background: #faf8ff; overflow: hidden; font-size: 13px;
+    }
+    .inbox-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; background: #f5f0ff; border-bottom: 1px solid #e8e0f0;
+      font-weight: 600; color: #6a4a9a; font-size: 12px;
+    }
+    .inbox-close { cursor: pointer; color: #b8a8d0; font-size: 14px; padding: 0 4px; }
+    .inbox-close:hover { color: #6a4a9a; }
+    #inboxList { padding: 8px 14px; max-height: 300px; overflow-y: auto; }
+    .inbox-item {
+      display: flex; align-items: center; gap: 8px; padding: 6px 0;
+      border-bottom: 1px solid #f0ecf8; font-size: 12px; color: #4a3570;
+    }
+    .inbox-item:last-child { border-bottom: none; }
+    .inbox-item a { color: #4a3570; text-decoration: none; flex: 1; }
+    .inbox-item a:hover { color: #7c4dff; }
+    .inbox-tag {
+      font-size: 10px; padding: 1px 8px; border-radius: 10px; font-weight: 600;
+      background: #f0ecf8; color: #8a7aa0; white-space: nowrap;
+    }
+    .inbox-empty { text-align: center; padding: 20px; color: #b8a8d0; font-size: 12px; }
+    .loading { text-align: center; padding: 12px; color: #b8a8d0; font-size: 12px; }
     .meta { font-size: 11px; color: #b8a8d0; text-align: center; margin-top: 20px; letter-spacing: 1px; }
     .meta a { color: #a088c8; text-decoration: none; }
     .spinner {
@@ -275,6 +307,16 @@
     <div class="tips-item">📄 上传截图需提取文字 → 在「详细说说」里注明，AI 整理时会处理</div>
     <div class="tips-item">🎨 看到好看的图片 → 类型选「灵感」，写下当时的感受</div>
     <div class="tips-item">📌 重要信息截图 → 类型选「笔记」，写上说明方便回顾</div>
+  </div>
+
+  <button type="button" class="view-btn" onclick="toggleInbox()">📂 查看已捕获</button>
+
+  <div id="inbox" class="inbox" style="display:none">
+    <div class="inbox-header">
+      <span>📂 已捕获的灵感</span>
+      <span class="inbox-close" onclick="toggleInbox()">✕</span>
+    </div>
+    <div id="inboxList"><div class="loading">加载中...</div></div>
   </div>
 
   <div class="meta">
@@ -435,6 +477,39 @@
     msg.className = isError ? 'error' : '';
     msg.style.display = '';
   }
+
+  window.toggleInbox = async function() {
+    const el = document.getElementById('inbox');
+    if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+    el.style.display = '';
+    document.getElementById('inboxList').innerHTML = '<div class="loading">加载中...</div>';
+    try {
+      const r = await fetch('https://api.github.com/repos/'+GIT_USER+'/'+GIT_REPO+'/contents/Inbox', {
+        headers: { Authorization: 'token '+GIT_TOKEN }
+      });
+      if (!r.ok) throw new Error('HTTP '+r.status);
+      const files = await r.json();
+      const list = document.getElementById('inboxList');
+      const items = files.filter(f => f.name.endsWith('.md') && !f.name.startsWith('.')).sort((a,b) => b.name.localeCompare(a.name));
+      if (items.length === 0) {
+        list.innerHTML = '<div class="inbox-empty">📭 还没有捕获的灵感</div>';
+        return;
+      }
+      list.innerHTML = items.map(f => {
+        const parts = f.name.replace('.md','').split('-');
+        const type = parts[1] || '';
+        const typeLabel = type === '灵感' ? '💡' : type === '待办' ? '✅' : type === '笔记' ? '📝' : '📄';
+        const dateStr = parts[0] || '';
+        return '<div class="inbox-item">' +
+          '<span class="inbox-tag">'+typeLabel+' '+dateStr+'</span>' +
+          '<a href="https://github.com/'+GIT_USER+'/'+GIT_REPO+'/blob/main/'+f.path+'" target="_blank">' +
+          f.name.replace('.md','').split('-').slice(1).join(' ') +
+          '</a></div>';
+      }).join('');
+    } catch(e) {
+      document.getElementById('inboxList').innerHTML = '<div class="inbox-empty">❌ 加载失败: '+e.message+'</div>';
+    }
+  };
 })();
 </script>
 </body>
