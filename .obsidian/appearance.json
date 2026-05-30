@@ -1,14 +1,14 @@
 {
-  "accentColor": "#6c5ce7",
+  "accentColor": "#7a9bb5",
   "cssTheme": "Minimal",
   "theme": "obsidian",
   "translucency": false,
   "nativeMenus": false,
   "showViewHeader": true,
   "baseFontSize": 16,
-  "interfaceFontFamily": "",
-  "textFontFamily": "",
-  "monospaceFontFamily": "",
+  "interfaceFontFamily": "Inter",
+  "textFontFamily": "Inter",
+  "monospaceFontFamily": "JetBrains Mono",
   "enabledCssSnippets": [
     "clean-elegance"
   ]
