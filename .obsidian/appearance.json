@@ -9,5 +9,7 @@
   "interfaceFontFamily": "",
   "textFontFamily": "",
   "monospaceFontFamily": "",
-  "enabledCssSnippets": []
+  "enabledCssSnippets": [
+    "clean-elegance"
+  ]
 }

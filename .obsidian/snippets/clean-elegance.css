@@ -252,10 +252,22 @@ body {
 }
 
 /* --- Folder icons --- */
+.nav-folder-title[data-path="首页"] .nav-folder-title-content::before { content: "🏠 "; }
+.nav-folder-title[data-path="待办总览"] .nav-folder-title-content::before { content: "📋 "; }
+.nav-folder-title[data-path="待办看板"] .nav-folder-title-content::before { content: "📊 "; }
+.nav-folder-title[data-path="灵感"] .nav-folder-title-content::before { content: "💡 "; }
+.nav-folder-title[data-path="知识储备"] .nav-folder-title-content::before { content: "📚 "; }
+.nav-folder-title[data-path="笔记"] .nav-folder-title-content::before { content: "📝 "; }
+.nav-folder-title[data-path="Inbox"] .nav-folder-title-content::before { content: "📥 "; }
+.nav-folder-title[data-path="写作"] .nav-folder-title-content::before { content: "✍️ "; }
+.nav-folder-title[data-path="写作资料"] .nav-folder-title-content::before { content: "📖 "; }
+.nav-folder-title[data-path="公众号"] .nav-folder-title-content::before { content: "📢 "; }
+.nav-folder-title[data-path="蜜蜂房"] .nav-folder-title-content::before { content: "🐝 "; }
+
 .nav-folder-title-content::before {
   display: inline-block;
   margin-right: 4px;
-  font-size: 0.85em;
+  font-size: 0.9em;
 }
 
 /* --- Sidebar --- */
