@@ -10,6 +10,7 @@
   "textFontFamily": "Inter",
   "monospaceFontFamily": "JetBrains Mono",
   "enabledCssSnippets": [
-    "clean-elegance"
+    "clean-elegance",
+    "novel-cards"
   ]
 }

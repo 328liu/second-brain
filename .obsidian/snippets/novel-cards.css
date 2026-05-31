@@ -1,0 +1,167 @@
+/* ==========================================
+   📖 小说笔记 — 卡片式布局
+   ========================================== */
+
+/* === 写作资料文件夹：文件管理器卡片风格 === */
+.nav-folder[data-path="写作资料"] .nav-folder-children {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+}
+
+.nav-folder[data-path="写作资料"] .nav-file {
+  flex: 0 0 auto;
+  width: calc(50% - 2px);
+}
+
+.nav-folder[data-path="写作资料"] .nav-file-title {
+  background: #ffffff;
+  border: 1px solid #ececed;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 60px;
+}
+
+.nav-folder[data-path="写作资料"] .nav-file-title:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+.nav-folder[data-path="写作资料"] .nav-file-title.is-active {
+  border-left: 2px solid var(--accent);
+  border-color: var(--accent);
+}
+
+.nav-folder[data-path="写作资料"] .nav-file-title-content {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #2c2c2e;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* 显示文件创建时间 */
+.nav-folder[data-path="写作资料"] .nav-file-title::after {
+  content: attr(data-tag);
+  font-size: 0.65em;
+  color: #8a8a8a;
+  margin-top: 4px;
+  display: none;
+}
+
+/* === Dataview 卡片网格 === */
+/* 仅在加了 cssclass: novel-cards 的页面生效 */
+
+.novel-cards .dataview.table-view-table thead {
+  display: none;
+}
+
+.novel-cards .dataview.table-view-table tbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 0;
+}
+
+.novel-cards .dataview.table-view-table tbody tr {
+  display: flex;
+  flex-direction: column;
+  background: #fdfaf6;
+  border: 1px solid #ececed;
+  border-radius: 12px;
+  padding: 18px 16px 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  margin: 0;
+}
+
+.novel-cards .dataview.table-view-table tbody tr:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+
+.novel-cards .dataview.table-view-table tbody tr td {
+  display: block;
+  border: none;
+  padding: 0;
+  background: transparent;
+  text-align: left;
+}
+
+/* 第一列 = 标题 */
+.novel-cards .dataview.table-view-table tbody tr td:first-child {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:first-child a {
+  color: #1c1c1e;
+  text-decoration: none;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:first-child a:hover {
+  color: var(--accent);
+}
+
+/* 标题前图标 */
+.novel-cards .dataview.table-view-table tbody tr td:first-child::before {
+  content: "📄 ";
+  font-size: 0.85em;
+}
+
+/* 第二列 = 创建时间 */
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(2) {
+  font-size: 12px;
+  color: #8a8a8a;
+  margin-bottom: 8px;
+  font-weight: 400;
+}
+
+/* 第三列 = 标签 */
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(3) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(3) a {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.72em;
+  font-weight: 500;
+  background: #ececed;
+  color: #6a6a6a !important;
+  text-decoration: none;
+  border: none;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(3) a[href*="小说"] {
+  background: #e8dff5;
+  color: #6b4e9a !important;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(3) a[href*="短篇"] {
+  background: #dff0e5;
+  color: #3d7a5a !important;
+}
+
+.novel-cards .dataview.table-view-table tbody tr td:nth-child(3) a[href*="灵感"] {
+  background: #f5eedf;
+  color: #8a6e3a !important;
+}
+
+/* 写作资料页面标题图标 */
+.nav-folder-title[data-path="写作资料"] .nav-folder-title-content::before {
+  content: "📖 ";
+}
