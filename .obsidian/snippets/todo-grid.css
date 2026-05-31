@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════════
+   待办卡片网格 — todo-grid.css
+   ═══════════════════════════════════════════ */
+
+.todo-grid-container {
+  margin: 8px 0;
+}
+
+.todo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  padding: 4px 0;
+}
+
+.todo-card {
+  background: #fdfaf6;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid #f0ece8;
+  position: relative;
+}
+
+.todo-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.11);
+  transform: translateY(-2px);
+}
+
+/* ── Checkbox ── */
+.todo-checkbox {
+  margin-top: 3px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 5px;
+  border: 2px solid #d0ccc8;
+  background: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.todo-checkbox:hover {
+  border-color: #7aab8a;
+  background: #f0faf2;
+}
+
+.todo-checkbox:checked {
+  background: #7aab8a;
+  border-color: #7aab8a;
+}
+
+.todo-checkbox:checked::after {
+  content: '✓';
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── 卡片主体 ── */
+.todo-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-date {
+  font-size: 12px;
+  color: #9a9a9a;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.todo-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c2c2e;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+/* ── 元信息 ── */
+.todo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.todo-source {
+  font-size: 11px;
+  color: #aaa;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.todo-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 8px;
+  background: #ececed;
+  color: #6a6a6a;
+  line-height: 1.5;
+}
+
+.todo-tag[data-tag="紧急"] { background: #fce8e8; color: #c0392b; }
+.todo-tag[data-tag="重要"] { background: #fef5e7; color: #d68910; }
+.todo-tag[data-tag="一般"] { background: #eafaf1; color: #27ae60; }
+
+/* ── 空状态 ── */
+.todo-empty {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: #999;
+}
+
+/* ── 剩余提示 ── */
+.todo-show-more {
+  text-align: center;
+  padding: 14px;
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* ── 响应式 ── */
+@media (max-width: 600px) {
+  .todo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .todo-card {
+    padding: 12px;
+  }
+  .todo-text {
+    font-size: 14px;
+  }
+}

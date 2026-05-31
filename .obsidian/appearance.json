@@ -11,6 +11,7 @@
   "monospaceFontFamily": "JetBrains Mono",
   "enabledCssSnippets": [
     "clean-elegance",
-    "novel-cards"
+    "novel-cards",
+    "todo-grid"
   ]
 }
