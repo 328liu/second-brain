@@ -1,8 +1,0 @@
-{
-  "name": "pocket-capture",
-  "version": "1.0.0",
-  "description": "捕梦精灵 - 云端捕获系统",
-  "scripts": {
-    "vercel-build": "echo done"
-  }
-}
