@@ -4,6 +4,7 @@ param(
 )
 
 $bridgeJs = "C:\Users\胖丁会唱歌\AppData\Roaming\npm\node_modules\opencode-feishu-bridge\bin\opencode-feishu-start.js"
+$dnsFixJs = "C:\Users\胖丁会唱歌\.config\opencode\feishu-bridge\dns-fix.js"
 $logDir = "$env:TEMP"
 $logFile = "$logDir\feishu-bridge.log"
 $errFile = "$logDir\feishu-bridge.err"
@@ -22,7 +23,7 @@ switch ($Action) {
       Write-Host "Feishu bridge 已在运行 (PID: $($existing.ProcessId))"
       return
     }
-    $job = Start-Process -FilePath "node" -ArgumentList $bridgeJs -WindowStyle Hidden -PassThru -RedirectStandardOutput $logFile -RedirectStandardError $errFile
+    $job = Start-Process -FilePath "node" -ArgumentList @("--require", $dnsFixJs, $bridgeJs) -WindowStyle Hidden -PassThru -RedirectStandardOutput $logFile -RedirectStandardError $errFile
     $job.Id | Set-Content -Path $pidFile
     Write-Host "Feishu bridge 已启动 (PID: $($job.Id))"
     Write-Host "日志: $logFile"
